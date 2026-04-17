@@ -58,35 +58,35 @@ def build_card(p: dict) -> str:
     cta_html = f'<div class="cta-group">{"".join(cta_parts)}</div>'
 
     brand_html = f'<p class="brand">{brand}</p>' if brand else ""
-    name_en_html = f'<p class="name-en">{name_en}</p>' if name_en else ""
+    name_en_html = ""
 
     primary_link = ohouse_url if has_ohouse else (coupang_url or "#")
 
     return f"""
     <div class="card" data-category="{category}" data-price="{price_num}">
+      {brand_html}
       <a class="img-link" href="{primary_link}" target="_blank" rel="noopener noreferrer">
         <div class="img-wrap">
           <img src="{img}" alt="{name_ko}" loading="lazy">
         </div>
       </a>
       <div class="info">
-        {brand_html}
         <p class="name-ko">{name_ko}</p>
-        {name_en_html}
         {cta_html}
       </div>
     </div>"""
 
 
 def build_tabs(products: list) -> str:
-    seen = []
+    counts = {}
     for p in products:
         cat = p.get("category", "")
-        if cat and cat not in seen:
-            seen.append(cat)
-    tabs = '<button class="tab active" data-filter="전체">전체</button>'
-    for cat in seen:
-        tabs += f'\n    <button class="tab" data-filter="{cat}">{cat}</button>'
+        if cat:
+            counts[cat] = counts.get(cat, 0) + 1
+    total = len(products)
+    tabs = f'<button class="tab active" data-filter="전체">전체 <span class="tab-count">{total}</span></button>'
+    for cat, n in counts.items():
+        tabs += f'\n    <button class="tab" data-filter="{cat}">{cat} <span class="tab-count">{n}</span></button>'
     return tabs
 
 
@@ -165,6 +165,8 @@ def generate_html(products: list) -> str:
 
     .tab:hover {{ border-color: #aaa; color: #222; }}
     .tab.active {{ background: #1a1a1a; border-color: #1a1a1a; color: #fff; }}
+
+    .tab-count {{ font-size: 0.78rem; font-weight: 400; opacity: 0.6; }}
 
     .sort-controls {{
       display: flex;
@@ -253,7 +255,8 @@ def generate_html(products: list) -> str:
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: #c05030;
-      margin-bottom: 2px;
+      text-align: center;
+      padding: 14px 20px 14px;
     }}
 
     .name-ko {{
