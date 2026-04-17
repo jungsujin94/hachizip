@@ -10,6 +10,4 @@ __pycache__/
 node_modules/
 
 # Generated outputs
-products/
 products.json
-index.html
