@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c ' *)",
+      "Bash(node scraper.js \"https://store.ohou.se/goods/3868989\")"
+    ],
+    "additionalDirectories": [
+      "c:\\productspage"
+    ]
+  }
+}

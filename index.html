@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>hachizip items</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', 'Apple SD Gothic Neo', Arial, sans-serif;
+      background: #f5f4f0;
+      color: #1a1a1a;
+      padding: 48px 24px 80px;
+    }
+
+    .logo {
+      display: block;
+      margin: 0 auto 24px;
+      max-height: 120px;
+      width: auto;
+    }
+
+    .disclaimers {
+      text-align: center;
+      margin-bottom: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .disclaimer {
+      font-size: 0.75rem;
+      color: #bbb;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      max-width: 1280px;
+      margin: 0 auto 36px;
+    }
+
+    .tabs-wrap {
+      flex: 1;
+      min-width: 0;
+      position: relative;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tab {
+      border: 1.5px solid #ddd;
+      background: #fff;
+      border-radius: 999px;
+      padding: 8px 20px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: #666;
+      cursor: pointer;
+      transition: all .18s ease;
+    }
+
+    .tab:hover { border-color: #aaa; color: #222; }
+    .tab.active { background: #1a1a1a; border-color: #1a1a1a; color: #fff; }
+
+    .sort-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .sort-btn {
+      border: 1.5px solid #ddd;
+      background: #fff;
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #666;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all .18s ease;
+    }
+
+    .sort-btn:hover { border-color: #aaa; color: #222; }
+    .sort-btn.active { background: #1a1a1a; border-color: #1a1a1a; color: #fff; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 28px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 2px 16px rgba(0,0,0,.06);
+      transition: transform .22s ease, box-shadow .22s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 36px rgba(0,0,0,.12);
+    }
+
+    .card.hidden { display: none; }
+
+    .img-link { display: block; text-decoration: none; }
+
+    /* Warm parchment background so transparent sketch looks great */
+    .img-wrap {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: #f0ede8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 16px;
+    }
+
+    .img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      transition: transform .3s ease;
+    }
+
+    .card:hover .img-wrap img { transform: scale(1.04); }
+
+    .info {
+      padding: 18px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+      justify-content: space-between;
+    }
+
+    .brand {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #c05030;
+      margin-bottom: 2px;
+    }
+
+    .name-ko {
+      font-size: 0.95rem;
+      font-weight: 600;
+      line-height: 1.5;
+      color: #1a1a1a;
+    }
+
+    .name-en {
+      font-size: 0.78rem;
+      font-weight: 400;
+      color: #999;
+      font-style: italic;
+      margin-bottom: 10px;
+    }
+
+    .cta-group {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .cta {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      border-radius: 12px;
+      padding: 10px 8px;
+      text-decoration: none;
+      transition: filter .18s ease;
+      flex: 1;
+    }
+
+    .cta:hover { filter: brightness(0.93); }
+
+    .cta-ohouse {
+      background: #f0ede8;
+      border: 2px solid #B8CDE0;
+      color: #1a1a1a;
+    }
+
+    .cta-coupang {
+      background: #f0ede8;
+      border: 2px solid #E8C4A8;
+      color: #1a1a1a;
+    }
+
+    .cta-top {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .cta-logo {
+      height: 20px;
+      width: auto;
+      display: block;
+    }
+
+    .cta-arrow {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #333;
+    }
+
+    .cta-price {
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 24px 14px 60px; }
+      .logo { max-height: 72px; margin-bottom: 16px; }
+      .disclaimers { margin-bottom: 16px; }
+      .disclaimer { font-size: 0.58rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .toolbar { flex-direction: column; gap: 10px; margin-bottom: 20px; }
+
+      .tabs-wrap::after {
+        content: '';
+        position: absolute;
+        top: 0; right: 0;
+        height: 100%; width: 48px;
+        background: linear-gradient(to right, transparent, #f5f4f0);
+        pointer-events: none;
+        transition: opacity .25s;
+      }
+      .tabs-wrap.at-end::after { opacity: 0; }
+      .tabs { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; scrollbar-width: none; }
+      .tabs::-webkit-scrollbar { display: none; }
+      .tab { flex-shrink: 0; padding: 7px 14px; font-size: 0.82rem; }
+
+      .sort-controls { flex-direction: row; width: 100%; }
+      .sort-btn { flex: 1; text-align: center; padding: 7px 8px; font-size: 0.78rem; }
+
+      .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .info { padding: 10px 10px 12px; gap: 3px; }
+      .brand { font-size: 0.62rem; }
+      .name-ko { font-size: 0.78rem; }
+      .name-en { font-size: 0.68rem; }
+      .cta-group { gap: 6px; margin-top: 8px; }
+      .cta { padding: 7px 5px; gap: 3px; border-radius: 10px; }
+      .cta-logo { height: 14px; }
+      .cta-arrow { font-size: 0.68rem; }
+      .cta-price { font-size: 0.70rem; }
+    }
+  </style>
+</head>
+<body>
+  <img src="images/hachizip_nobg.png" alt="hachizip" class="logo">
+  <div class="disclaimers">
+    <p class="disclaimer">이 포스팅은 오늘의집 큐레이터 활동의 일환으로, 구매시 이에 따른 일정액의 수수료를 제공받습니다.</p>
+    <p class="disclaimer">이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
+    <p class="disclaimer">※ 표시된 가격은 쿠폰 적용 전 가격이며, 배송비가 별도로 발생할 수 있습니다.</p>
+  </div>
+  <div class="toolbar">
+    <div class="tabs-wrap">
+      <div class="tabs">
+        <button class="tab active" data-filter="전체">전체</button>
+    <button class="tab" data-filter="조명">조명</button>
+    <button class="tab" data-filter="수납">수납</button>
+    <button class="tab" data-filter="의자">의자</button>
+    <button class="tab" data-filter="기타">기타</button>
+    <button class="tab" data-filter="소파">소파</button>
+      </div>
+    </div>
+    <div class="sort-controls">
+      <button class="sort-btn" data-sort="asc">가격 낮은순 ↑</button>
+      <button class="sort-btn" data-sort="desc">가격 높은순 ↓</button>
+    </div>
+  </div>
+  <div class="grid">
+    <div class="card" data-category="조명" data-price="60900">
+      <a class="img-link" href="https://store.ohou.se/goods/1617564?airbridge_referrer=airbridge%3Dtrue%26client_id%3D77c9ef9d-12ce-49b2-845d-35b95427bdcf%26event_uuid%3Daefd7337-5739-4372-ad6f-cef82655623d%26referrer_timestamp%3D1776428891850%26channel%3Daffiliate%26campaign%3Dbrand_affiliate%26ad_group%3D19149613%26ad_creative%3D23748%26content%3DProduction_1617564%26term%3D20260417%26sub_id_2%3Daffiliate%26sub_id_3%3Dinorganic&utm_source=affiliate&utm_campaign=brand_affiliate&utm_term=20260417&utm_content=Production_1617564&channel=affiliate&sub_id_2=affiliate&sub_id_3=inorganic&campaign=brand_affiliate&term=20260417&ad_creative=23748&ad_group=19149613&content=Production_1617564&deeplink_url=ohouseapp%3A%2F%2Fstore.ohou.se%2Fgoods%2F1617564&fallback_desktop=https%3A%2F%2Fstore.ohou.se%2Fgoods%2F1617564" target="_blank" rel="noopener noreferrer">
+        <div class="img-wrap">
+          <img src="products/paper-lamp-cloud-three-tier-stand.png" alt="페이퍼램프 클라우드 3단 한지 단스탠드" loading="lazy">
+        </div>
+      </a>
+      <div class="info">
+        <p class="brand">Rome&Glas</p>
+        <p class="name-ko">페이퍼램프 클라우드 3단 한지 단스탠드</p>
+        <p class="name-en">Paper Lamp Cloud Three-Tier Stand</p>
+        <div class="cta-group"><a class="cta cta-ohouse" href="https://store.ohou.se/goods/1617564?airbridge_referrer=airbridge%3Dtrue%26client_id%3D77c9ef9d-12ce-49b2-845d-35b95427bdcf%26event_uuid%3Daefd7337-5739-4372-ad6f-cef82655623d%26referrer_timestamp%3D1776428891850%26channel%3Daffiliate%26campaign%3Dbrand_affiliate%26ad_group%3D19149613%26ad_creative%3D23748%26content%3DProduction_1617564%26term%3D20260417%26sub_id_2%3Daffiliate%26sub_id_3%3Dinorganic&utm_source=affiliate&utm_campaign=brand_affiliate&utm_term=20260417&utm_content=Production_1617564&channel=affiliate&sub_id_2=affiliate&sub_id_3=inorganic&campaign=brand_affiliate&term=20260417&ad_creative=23748&ad_group=19149613&content=Production_1617564&deeplink_url=ohouseapp%3A%2F%2Fstore.ohou.se%2Fgoods%2F1617564&fallback_desktop=https%3A%2F%2Fstore.ohou.se%2Fgoods%2F1617564" target="_blank" rel="noopener noreferrer">
+            <div class="cta-top">
+              <img src="images/todayhouse_nobg.png" alt="오늘의집" class="cta-logo">
+              <span class="cta-arrow">↗</span>
+            </div>
+            <span class="cta-price">60,900원</span>
+          </a></div>
+      </div>
+    </div>
+    <div class="card" data-category="수납" data-price="69900">
+      <a class="img-link" href="https://store.ohou.se/goods/2829164?airbridge_referrer=airbridge%3Dtrue%26client_id%3D74e70a65-a00a-462d-8ad9-51267d59f8fb%26event_uuid%3Da472b821-3914-47f3-9313-b41a053dcbc6%26referrer_timestamp%3D1776429485510%26channel%3Daffiliate%26campaign%3Dbrand_affiliate%26ad_group%3D19149613%26ad_creative%3D23748%26content%3DProduction_2829164%26term%3D20260417%26sub_id_2%3Daffiliate%26sub_id_3%3Dinorganic&utm_source=affiliate&utm_campaign=brand_affiliate&utm_term=20260417&utm_content=Production_2829164&channel=affiliate&sub_id_2=affiliate&sub_id_3=inorganic&campaign=brand_affiliate&term=20260417&ad_creative=23748&ad_group=19149613&content=Production_2829164&deeplink_url=ohouseapp%3A%2F%2Fstore.ohou.se%2Fgoods%2F2829164&fallback_desktop=https%3A%2F%2Fstore.ohou.se%2Fgoods%2F2829164" target="_blank" rel="noopener noreferrer">
+        <div class="img-wrap">
+          <img src="products/alexa-regular-display-iron-shelf.png" alt="알렉사 레귤러 디스플레이 철제 선반 진열장 3단" loading="lazy">
+        </div>
+      </a>
+      <div class="info">
+        <p class="brand">심플먼트</p>
+        <p class="name-ko">알렉사 레귤러 디스플레이 철제 선반 진열장 3단</p>
+        <p class="name-en">Alexa Regular Display Iron Shelf 3-Tier</p>
+        <div class="cta-group"><a class="cta cta-ohouse" href="https://store.ohou.se/goods/2829164?airbridge_referrer=airbridge%3Dtrue%26client_id%3D74e70a65-a00a-462d-8ad9-51267d59f8fb%26event_uuid%3Da472b821-3914-47f3-9313-b41a053dcbc6%26referrer_timestamp%3D1776429485510%26channel%3Daffiliate%26campaign%3Dbrand_affiliate%26ad_group%3D19149613%26ad_creative%3D23748%26content%3DProduction_2829164%26term%3D20260417%26sub_id_2%3Daffiliate%26sub_id_3%3Dinorganic&utm_source=affiliate&utm_campaign=brand_affiliate&utm_term=20260417&utm_content=Production_2829164&channel=affiliate&sub_id_2=affiliate&sub_id_3=inorganic&campaign=brand_affiliate&term=20260417&ad_creative=23748&ad_group=19149613&content=Production_2829164&deeplink_url=ohouseapp%3A%2F%2Fstore.ohou.se%2Fgoods%2F2829164&fallback_desktop=https%3A%2F%2Fstore.ohou.se%2Fgoods%2F2829164" target="_blank" rel="noopener noreferrer">
+            <div class="cta-top">
+              <img src="images/todayhouse_nobg.png" alt="오늘의집" class="cta-logo">
+              <span class="cta-arrow">↗</span>
+            </div>
+            <span class="cta-price">69,900원</span>
+          </a></div>
+      </div>
+    </div>
+    <div class="card" data-category="의자" data-price="159000">
+      <a class="img-link" href="https://store.ohou.se/goods/3266299?airbridge_referrer=airbridge%3Dtrue%26client_id%3D8b1a936c-7e54-462d-a159-5eecb82be9c7%26event_uuid%3D598c088f-950a-45a4-a63c-507cb9ce084b%26referrer_timestamp%3D1776429828415%26channel%3Daffiliate%26campaign%3Dbrand_affiliate%26ad_group%3D19149613%26ad_creative%3D23748%26content%3DProduction_3266299%26term%3D20260417%26sub_id_2%3Daffiliate%26sub_id_3%3Dinorganic&utm_source=affiliate&utm_campaign=brand_affiliate&utm_term=20260417&utm_content=Production_3266299&channel=affiliate&sub_id_2=affiliate&sub_id_3=inorganic&campaign=brand_affiliate&term=20260417&ad_creative=23748&ad_group=19149613&content=Production_3266299&deeplink_url=ohouseapp%3A%2F%2Fstore.ohou.se%2Fgoods%2F3266299&fallback_desktop=https%3A%2F%2Fstore.ohou.se%2Fgoods%2F3266299" target="_blank" rel="noopener noreferrer">
+        <div class="img-wrap">
+          <img src="products/my-comfort-office-chair-yellow.png" alt="마이 컴포트 오피스 의자 옐로우" loading="lazy">
+        </div>
+      </a>
+      <div class="info">
+        <p class="brand">모던하우스</p>
+        <p class="name-ko">마이 컴포트 오피스 의자 옐로우</p>
+        <p class="name-en">My Comfort Office Chair Yellow</p>
+        <div class="cta-group"><a class="cta cta-ohouse" href="https://store.ohou.se/goods/3266299?airbridge_referrer=airbridge%3Dtrue%26client_id%3D8b1a936c-7e54-462d-a159-5eecb82be9c7%26event_uuid%3D598c088f-950a-45a4-a63c-507cb9ce084b%26referrer_timestamp%3D1776429828415%26channel%3Daffiliate%26campaign%3Dbrand_affiliate%26ad_group%3D19149613%26ad_creative%3D23748%26content%3DProduction_3266299%26term%3D20260417%26sub_id_2%3Daffiliate%26sub_id_3%3Dinorganic&utm_source=affiliate&utm_campaign=brand_affiliate&utm_term=20260417&utm_content=Production_3266299&channel=affiliate&sub_id_2=affiliate&sub_id_3=inorganic&campaign=brand_affiliate&term=20260417&ad_creative=23748&ad_group=19149613&content=Production_3266299&deeplink_url=ohouseapp%3A%2F%2Fstore.ohou.se%2Fgoods%2F3266299&fallback_desktop=https%3A%2F%2Fstore.ohou.se%2Fgoods%2F3266299" target="_blank" rel="noopener noreferrer">
+            <div class="cta-top">
+              <img src="images/todayhouse_nobg.png" alt="오늘의집" class="cta-logo">
+              <span class="cta-arrow">↗</span>
+            </div>
+            <span class="cta-price">159,000원</span>
+          </a></div>
+      </div>
+    </div>
+    <div class="card" data-category="수납" data-price="149000">
+      <a class="img-link" href="https://store.ohou.se/goods/3420852?airbridge_referrer=airbridge%3Dtrue%26client_id%3D7821694e-45e0-4aea-8694-93ffeb9394bd%26event_uuid%3D96cce3db-e7a0-41ef-83d3-70d57245afa0%26referrer_timestamp%3D1776429891491%26channel%3Daffiliate%26campaign%3Dbrand_affiliate%26ad_group%3D19149613%26ad_creative%3D23748%26content%3DProduction_3420852%26term%3D20260417%26sub_id_2%3Daffiliate%26sub_id_3%3Dinorganic&utm_source=affiliate&utm_campaign=brand_affiliate&utm_term=20260417&utm_content=Production_3420852&channel=affiliate&sub_id_2=affiliate&sub_id_3=inorganic&campaign=brand_affiliate&term=20260417&ad_creative=23748&ad_group=19149613&content=Production_3420852&deeplink_url=ohouseapp%3A%2F%2Fstore.ohou.se%2Fgoods%2F3420852&fallback_desktop=https%3A%2F%2Fstore.ohou.se%2Fgoods%2F3420852" target="_blank" rel="noopener noreferrer">
+        <div class="img-wrap">
+          <img src="products/monde-e0-3-door-tall-storage.png" alt="몬드 E0 3단 높은 도어수납장" loading="lazy">
+        </div>
+      </a>
+      <div class="info">
+        <p class="brand">모던하우스</p>
+        <p class="name-ko">몬드 E0 3단 높은 도어수납장</p>
+        <p class="name-en">Monde E0 3-Door Tall Storage Cabinet</p>
+        <div class="cta-group"><a class="cta cta-ohouse" href="https://store.ohou.se/goods/3420852?airbridge_referrer=airbridge%3Dtrue%26client_id%3D7821694e-45e0-4aea-8694-93ffeb9394bd%26event_uuid%3D96cce3db-e7a0-41ef-83d3-70d57245afa0%26referrer_timestamp%3D1776429891491%26channel%3Daffiliate%26campaign%3Dbrand_affiliate%26ad_group%3D19149613%26ad_creative%3D23748%26content%3DProduction_3420852%26term%3D20260417%26sub_id_2%3Daffiliate%26sub_id_3%3Dinorganic&utm_source=affiliate&utm_campaign=brand_affiliate&utm_term=20260417&utm_content=Production_3420852&channel=affiliate&sub_id_2=affiliate&sub_id_3=inorganic&campaign=brand_affiliate&term=20260417&ad_creative=23748&ad_group=19149613&content=Production_3420852&deeplink_url=ohouseapp%3A%2F%2Fstore.ohou.se%2Fgoods%2F3420852&fallback_desktop=https%3A%2F%2Fstore.ohou.se%2Fgoods%2F3420852" target="_blank" rel="noopener noreferrer">
+            <div class="cta-top">
+              <img src="images/todayhouse_nobg.png" alt="오늘의집" class="cta-logo">
+              <span class="cta-arrow">↗</span>
+            </div>
+            <span class="cta-price">149,000원</span>
+          </a></div>
+      </div>
+    </div>
+    <div class="card" data-category="조명" data-price="395000">
+      <a class="img-link" href="https://store.ohou.se/goods/3729219?airbridge_referrer=airbridge%3Dtrue%26client_id%3D10c64037-456a-44bf-9f96-25f025635eea%26event_uuid%3D551d9e54-fbef-4d3b-bc40-7e6327cb5a78%26referrer_timestamp%3D1776429957127%26channel%3Daffiliate%26campaign%3Dbrand_affiliate%26ad_group%3D19149613%26ad_creative%3D23748%26content%3DProduction_3729219%26term%3D20260417%26sub_id_2%3Daffiliate%26sub_id_3%3Dinorganic&utm_source=affiliate&utm_campaign=brand_affiliate&utm_term=20260417&utm_content=Production_3729219&channel=affiliate&sub_id_2=affiliate&sub_id_3=inorganic&campaign=brand_affiliate&term=20260417&ad_creative=23748&ad_group=19149613&content=Production_3729219&deeplink_url=ohouseapp%3A%2F%2Fstore.ohou.se%2Fgoods%2F3729219&fallback_desktop=https%3A%2F%2Fstore.ohou.se%2Fgoods%2F3729219" target="_blank" rel="noopener noreferrer">
+        <div class="img-wrap">
+          <img src="products/kubrin-lighting-360-acrylic.png" alt="Kubrin lighting 360 (올 아크릴)" loading="lazy">
+        </div>
+      </a>
+      <div class="info">
+        <p class="brand">프랭크앵글</p>
+        <p class="name-ko">Kubrin lighting 360 (올 아크릴)</p>
+        <p class="name-en">Kubrin Lighting 360 All Acrylic</p>
+        <div class="cta-group"><a class="cta cta-ohouse" href="https://store.ohou.se/goods/3729219?airbridge_referrer=airbridge%3Dtrue%26client_id%3D10c64037-456a-44bf-9f96-25f025635eea%26event_uuid%3D551d9e54-fbef-4d3b-bc40-7e6327cb5a78%26referrer_timestamp%3D1776429957127%26channel%3Daffiliate%26campaign%3Dbrand_affiliate%26ad_group%3D19149613%26ad_creative%3D23748%26content%3DProduction_3729219%26term%3D20260417%26sub_id_2%3Daffiliate%26sub_id_3%3Dinorganic&utm_source=affiliate&utm_campaign=brand_affiliate&utm_term=20260417&utm_content=Production_3729219&channel=affiliate&sub_id_2=affiliate&sub_id_3=inorganic&campaign=brand_affiliate&term=20260417&ad_creative=23748&ad_group=19149613&content=Production_3729219&deeplink_url=ohouseapp%3A%2F%2Fstore.ohou.se%2Fgoods%2F3729219&fallback_desktop=https%3A%2F%2Fstore.ohou.se%2Fgoods%2F3729219" target="_blank" rel="noopener noreferrer">
+            <div class="cta-top">
+              <img src="images/todayhouse_nobg.png" alt="오늘의집" class="cta-logo">
+              <span class="cta-arrow">↗</span>
+            </div>
+            <span class="cta-price">395,000원</span>
+          </a></div>
+      </div>
+    </div>
+    <div class="card" data-category="조명" data-price="34900">
+      <a class="img-link" href="https://store.ohou.se/goods/3395370?airbridge_referrer=airbridge%3Dtrue%26client_id%3Dae61197f-0c3e-4f23-9ebe-2de51d96e709%26event_uuid%3Dee0a0110-0a2b-4033-9f27-cfc3d88a0155%26referrer_timestamp%3D1776430079314%26channel%3Daffiliate%26campaign%3Dbrand_affiliate%26ad_group%3D19149613%26ad_creative%3D23748%26content%3DProduction_3395370%26term%3D20260417%26sub_id_2%3Daffiliate%26sub_id_3%3Dinorganic&utm_source=affiliate&utm_campaign=brand_affiliate&utm_term=20260417&utm_content=Production_3395370&channel=affiliate&sub_id_2=affiliate&sub_id_3=inorganic&campaign=brand_affiliate&term=20260417&ad_creative=23748&ad_group=19149613&content=Production_3395370&deeplink_url=ohouseapp%3A%2F%2Fstore.ohou.se%2Fgoods%2F3395370&fallback_desktop=https%3A%2F%2Fstore.ohou.se%2Fgoods%2F3395370" target="_blank" rel="noopener noreferrer">
+        <div class="img-wrap">
+          <img src="products/paper-lamp-standard-korean-fabric.png" alt="페이퍼램프 스탠다드 한지조명" loading="lazy">
+        </div>
+      </a>
+      <div class="info">
+        <p class="brand">누노즈</p>
+        <p class="name-ko">페이퍼램프 스탠다드 한지조명</p>
+        <p class="name-en">Paper Lamp Standard Korean Fabric</p>
+        <div class="cta-group"><a class="cta cta-ohouse" href="https://store.ohou.se/goods/3395370?airbridge_referrer=airbridge%3Dtrue%26client_id%3Dae61197f-0c3e-4f23-9ebe-2de51d96e709%26event_uuid%3Dee0a0110-0a2b-4033-9f27-cfc3d88a0155%26referrer_timestamp%3D1776430079314%26channel%3Daffiliate%26campaign%3Dbrand_affiliate%26ad_group%3D19149613%26ad_creative%3D23748%26content%3DProduction_3395370%26term%3D20260417%26sub_id_2%3Daffiliate%26sub_id_3%3Dinorganic&utm_source=affiliate&utm_campaign=brand_affiliate&utm_term=20260417&utm_content=Production_3395370&channel=affiliate&sub_id_2=affiliate&sub_id_3=inorganic&campaign=brand_affiliate&term=20260417&ad_creative=23748&ad_group=19149613&content=Production_3395370&deeplink_url=ohouseapp%3A%2F%2Fstore.ohou.se%2Fgoods%2F3395370&fallback_desktop=https%3A%2F%2Fstore.ohou.se%2Fgoods%2F3395370" target="_blank" rel="noopener noreferrer">
+            <div class="cta-top">
+              <img src="images/todayhouse_nobg.png" alt="오늘의집" class="cta-logo">
+              <span class="cta-arrow">↗</span>
+            </div>
+            <span class="cta-price">34,900원</span>
+          </a></div>
+      </div>
+    </div>
+    <div class="card" data-category="조명" data-price="76400">
+      <a class="img-link" href="https://store.ohou.se/goods/3641396?airbridge_referrer=airbridge%3Dtrue%26client_id%3Dc744d802-75a4-44ce-9cdf-edd4aecb8d06%26event_uuid%3Dc137a462-6e59-4176-93ad-7163355c3eec%26referrer_timestamp%3D1776430542783%26channel%3Daffiliate%26campaign%3Dbrand_affiliate%26ad_group%3D19149613%26ad_creative%3D23748%26content%3DProduction_3641396%26term%3D20260417%26sub_id_2%3Daffiliate%26sub_id_3%3Dinorganic&utm_source=affiliate&utm_campaign=brand_affiliate&utm_term=20260417&utm_content=Production_3641396&channel=affiliate&sub_id_2=affiliate&sub_id_3=inorganic&campaign=brand_affiliate&term=20260417&ad_creative=23748&ad_group=19149613&content=Production_3641396&deeplink_url=ohouseapp%3A%2F%2Fstore.ohou.se%2Fgoods%2F3641396&fallback_desktop=https%3A%2F%2Fstore.ohou.se%2Fgoods%2F3641396" target="_blank" rel="noopener noreferrer">
+        <div class="img-wrap">
+          <img src="products/steel-sliding-led-floor-stand-lamp.png" alt="스틸 슬라이딩 LED 플로어 장스탠드" loading="lazy">
+        </div>
+      </a>
+      <div class="info">
+        <p class="brand">레나에너지</p>
+        <p class="name-ko">스틸 슬라이딩 LED 플로어 장스탠드</p>
+        <p class="name-en">Steel Sliding LED Floor Lamp</p>
+        <div class="cta-group"><a class="cta cta-ohouse" href="https://store.ohou.se/goods/3641396?airbridge_referrer=airbridge%3Dtrue%26client_id%3Dc744d802-75a4-44ce-9cdf-edd4aecb8d06%26event_uuid%3Dc137a462-6e59-4176-93ad-7163355c3eec%26referrer_timestamp%3D1776430542783%26channel%3Daffiliate%26campaign%3Dbrand_affiliate%26ad_group%3D19149613%26ad_creative%3D23748%26content%3DProduction_3641396%26term%3D20260417%26sub_id_2%3Daffiliate%26sub_id_3%3Dinorganic&utm_source=affiliate&utm_campaign=brand_affiliate&utm_term=20260417&utm_content=Production_3641396&channel=affiliate&sub_id_2=affiliate&sub_id_3=inorganic&campaign=brand_affiliate&term=20260417&ad_creative=23748&ad_group=19149613&content=Production_3641396&deeplink_url=ohouseapp%3A%2F%2Fstore.ohou.se%2Fgoods%2F3641396&fallback_desktop=https%3A%2F%2Fstore.ohou.se%2Fgoods%2F3641396" target="_blank" rel="noopener noreferrer">
+            <div class="cta-top">
+              <img src="images/todayhouse_nobg.png" alt="오늘의집" class="cta-logo">
+              <span class="cta-arrow">↗</span>
+            </div>
+            <span class="cta-price">76,400원</span>
+          </a></div>
+      </div>
+    </div>
+    <div class="card" data-category="기타" data-price="54000">
+      <a class="img-link" href="https://store.ohou.se/goods/2226337?airbridge_referrer=airbridge%3Dtrue%26client_id%3D399c85ff-bbf5-4ea1-852b-8504650a8dc5%26event_uuid%3Dace3d504-b78a-4ce3-ba3b-854b49ff4b7e%26referrer_timestamp%3D1776430633460%26channel%3Daffiliate%26campaign%3Dbrand_affiliate%26ad_group%3D19149613%26ad_creative%3D23748%26content%3DProduction_2226337%26term%3D20260417%26sub_id_2%3Daffiliate%26sub_id_3%3Dinorganic&utm_source=affiliate&utm_campaign=brand_affiliate&utm_term=20260417&utm_content=Production_2226337&channel=affiliate&sub_id_2=affiliate&sub_id_3=inorganic&campaign=brand_affiliate&term=20260417&ad_creative=23748&ad_group=19149613&content=Production_2226337&deeplink_url=ohouseapp%3A%2F%2Fstore.ohou.se%2Fgoods%2F2226337&fallback_desktop=https%3A%2F%2Fstore.ohou.se%2Fgoods%2F2226337" target="_blank" rel="noopener noreferrer">
+        <div class="img-wrap">
+          <img src="products/realtouch-paradise-bird-artificial-flower.png" alt="리얼터치 극락조 조화 나무" loading="lazy">
+        </div>
+      </a>
+      <div class="info">
+        <p class="brand">송트리</p>
+        <p class="name-ko">리얼터치 극락조 조화 나무</p>
+        <p class="name-en">Realtouch Paradise Bird Artificial Flower</p>
+        <div class="cta-group"><a class="cta cta-ohouse" href="https://store.ohou.se/goods/2226337?airbridge_referrer=airbridge%3Dtrue%26client_id%3D399c85ff-bbf5-4ea1-852b-8504650a8dc5%26event_uuid%3Dace3d504-b78a-4ce3-ba3b-854b49ff4b7e%26referrer_timestamp%3D1776430633460%26channel%3Daffiliate%26campaign%3Dbrand_affiliate%26ad_group%3D19149613%26ad_creative%3D23748%26content%3DProduction_2226337%26term%3D20260417%26sub_id_2%3Daffiliate%26sub_id_3%3Dinorganic&utm_source=affiliate&utm_campaign=brand_affiliate&utm_term=20260417&utm_content=Production_2226337&channel=affiliate&sub_id_2=affiliate&sub_id_3=inorganic&campaign=brand_affiliate&term=20260417&ad_creative=23748&ad_group=19149613&content=Production_2226337&deeplink_url=ohouseapp%3A%2F%2Fstore.ohou.se%2Fgoods%2F2226337&fallback_desktop=https%3A%2F%2Fstore.ohou.se%2Fgoods%2F2226337" target="_blank" rel="noopener noreferrer">
+            <div class="cta-top">
+              <img src="images/todayhouse_nobg.png" alt="오늘의집" class="cta-logo">
+              <span class="cta-arrow">↗</span>
+            </div>
+            <span class="cta-price">54,000원</span>
+          </a></div>
+      </div>
+    </div>
+    <div class="card" data-category="의자" data-price="78900">
+      <a class="img-link" href="https://store.ohou.se/goods/1120274?airbridge_referrer=airbridge%3Dtrue%26client_id%3D87a31806-cfe6-4803-bb03-0c53668a7100%26event_uuid%3D0ad2e894-d788-40b6-be4b-5278aba68224%26referrer_timestamp%3D1776430832423%26channel%3Daffiliate%26campaign%3Dbrand_affiliate%26ad_group%3D19149613%26ad_creative%3D23748%26content%3DProduction_1120274%26term%3D20260417%26sub_id_2%3Daffiliate%26sub_id_3%3Dinorganic&utm_source=affiliate&utm_campaign=brand_affiliate&utm_term=20260417&utm_content=Production_1120274&channel=affiliate&sub_id_2=affiliate&sub_id_3=inorganic&campaign=brand_affiliate&term=20260417&ad_creative=23748&ad_group=19149613&content=Production_1120274&deeplink_url=ohouseapp%3A%2F%2Fstore.ohou.se%2Fgoods%2F1120274&fallback_desktop=https%3A%2F%2Fstore.ohou.se%2Fgoods%2F1120274" target="_blank" rel="noopener noreferrer">
+        <div class="img-wrap">
+          <img src="products/rosa-square-handle-stool-4color.png" alt="로사 사각손잡이 스툴" loading="lazy">
+        </div>
+      </a>
+      <div class="info">
+        <p class="brand">플로바움</p>
+        <p class="name-ko">로사 사각손잡이 스툴</p>
+        <p class="name-en">Rosa Square Handle Stool</p>
+        <div class="cta-group"><a class="cta cta-ohouse" href="https://store.ohou.se/goods/1120274?airbridge_referrer=airbridge%3Dtrue%26client_id%3D87a31806-cfe6-4803-bb03-0c53668a7100%26event_uuid%3D0ad2e894-d788-40b6-be4b-5278aba68224%26referrer_timestamp%3D1776430832423%26channel%3Daffiliate%26campaign%3Dbrand_affiliate%26ad_group%3D19149613%26ad_creative%3D23748%26content%3DProduction_1120274%26term%3D20260417%26sub_id_2%3Daffiliate%26sub_id_3%3Dinorganic&utm_source=affiliate&utm_campaign=brand_affiliate&utm_term=20260417&utm_content=Production_1120274&channel=affiliate&sub_id_2=affiliate&sub_id_3=inorganic&campaign=brand_affiliate&term=20260417&ad_creative=23748&ad_group=19149613&content=Production_1120274&deeplink_url=ohouseapp%3A%2F%2Fstore.ohou.se%2Fgoods%2F1120274&fallback_desktop=https%3A%2F%2Fstore.ohou.se%2Fgoods%2F1120274" target="_blank" rel="noopener noreferrer">
+            <div class="cta-top">
+              <img src="images/todayhouse_nobg.png" alt="오늘의집" class="cta-logo">
+              <span class="cta-arrow">↗</span>
+            </div>
+            <span class="cta-price">78,900원</span>
+          </a></div>
+      </div>
+    </div>
+    <div class="card" data-category="소파" data-price="899000">
+      <a class="img-link" href="https://store.ohou.se/goods/3868989?airbridge_referrer=airbridge%3Dtrue%26client_id%3D81efa06f-a480-42e6-a6ea-519ef6df49c2%26event_uuid%3D980c976f-e843-42b2-ad45-1eee7e8633b4%26referrer_timestamp%3D1776430877568%26channel%3Daffiliate%26campaign%3Dbrand_affiliate%26ad_group%3D19149613%26ad_creative%3D23748%26content%3DProduction_3868989%26term%3D20260417%26sub_id_2%3Daffiliate%26sub_id_3%3Dinorganic&utm_source=affiliate&utm_campaign=brand_affiliate&utm_term=20260417&utm_content=Production_3868989&channel=affiliate&sub_id_2=affiliate&sub_id_3=inorganic&campaign=brand_affiliate&term=20260417&ad_creative=23748&ad_group=19149613&content=Production_3868989&deeplink_url=ohouseapp%3A%2F%2Fstore.ohou.se%2Fgoods%2F3868989&fallback_desktop=https%3A%2F%2Fstore.ohou.se%2Fgoods%2F3868989" target="_blank" rel="noopener noreferrer">
+        <div class="img-wrap">
+          <img src="products/tompack-modular-3-seater-sofa-bed.png" alt="톰팩 모듈형 압축 3인용 패브릭 소파 베드" loading="lazy">
+        </div>
+      </a>
+      <div class="info">
+        <p class="brand">플래지어</p>
+        <p class="name-ko">톰팩 모듈형 압축 3인용 패브릭 소파 베드</p>
+        <p class="name-en">Tompack Modular 3-Seater Fabric Sofa Bed</p>
+        <div class="cta-group"><a class="cta cta-ohouse" href="https://store.ohou.se/goods/3868989?airbridge_referrer=airbridge%3Dtrue%26client_id%3D81efa06f-a480-42e6-a6ea-519ef6df49c2%26event_uuid%3D980c976f-e843-42b2-ad45-1eee7e8633b4%26referrer_timestamp%3D1776430877568%26channel%3Daffiliate%26campaign%3Dbrand_affiliate%26ad_group%3D19149613%26ad_creative%3D23748%26content%3DProduction_3868989%26term%3D20260417%26sub_id_2%3Daffiliate%26sub_id_3%3Dinorganic&utm_source=affiliate&utm_campaign=brand_affiliate&utm_term=20260417&utm_content=Production_3868989&channel=affiliate&sub_id_2=affiliate&sub_id_3=inorganic&campaign=brand_affiliate&term=20260417&ad_creative=23748&ad_group=19149613&content=Production_3868989&deeplink_url=ohouseapp%3A%2F%2Fstore.ohou.se%2Fgoods%2F3868989&fallback_desktop=https%3A%2F%2Fstore.ohou.se%2Fgoods%2F3868989" target="_blank" rel="noopener noreferrer">
+            <div class="cta-top">
+              <img src="images/todayhouse_nobg.png" alt="오늘의집" class="cta-logo">
+              <span class="cta-arrow">↗</span>
+            </div>
+            <span class="cta-price">899,000원</span>
+          </a></div>
+      </div>
+    </div>
+    <div class="card" data-category="기타" data-price="239000">
+      <a class="img-link" href="https://store.ohou.se/goods/1332464?airbridge_referrer=airbridge%3Dtrue%26client_id%3D5f670df3-061f-44f9-8917-04735a24d28f%26event_uuid%3De00ecbb2-3e05-4189-b29f-8679482fb624%26referrer_timestamp%3D1776431023688%26channel%3Daffiliate%26campaign%3Dbrand_affiliate%26ad_group%3D19149613%26ad_creative%3D23748%26content%3DProduction_1332464%26term%3D20260417%26sub_id_2%3Daffiliate%26sub_id_3%3Dinorganic&utm_source=affiliate&utm_campaign=brand_affiliate&utm_term=20260417&utm_content=Production_1332464&channel=affiliate&sub_id_2=affiliate&sub_id_3=inorganic&campaign=brand_affiliate&term=20260417&ad_creative=23748&ad_group=19149613&content=Production_1332464&deeplink_url=ohouseapp%3A%2F%2Fstore.ohou.se%2Fgoods%2F1332464&fallback_desktop=https%3A%2F%2Fstore.ohou.se%2Fgoods%2F1332464" target="_blank" rel="noopener noreferrer">
+        <div class="img-wrap">
+          <img src="products/uv-sterilization-pet-air-purifier-iap22.png" alt="UV 살균 펫 공기청정기 iAP22 펫필터 포함" loading="lazy">
+        </div>
+      </a>
+      <div class="info">
+        <p class="brand">아이닉</p>
+        <p class="name-ko">UV 살균 펫 공기청정기 iAP22 펫필터 포함</p>
+        <p class="name-en">UV Sterilization Pet Air Purifier iAP22</p>
+        <div class="cta-group"><a class="cta cta-ohouse" href="https://store.ohou.se/goods/1332464?airbridge_referrer=airbridge%3Dtrue%26client_id%3D5f670df3-061f-44f9-8917-04735a24d28f%26event_uuid%3De00ecbb2-3e05-4189-b29f-8679482fb624%26referrer_timestamp%3D1776431023688%26channel%3Daffiliate%26campaign%3Dbrand_affiliate%26ad_group%3D19149613%26ad_creative%3D23748%26content%3DProduction_1332464%26term%3D20260417%26sub_id_2%3Daffiliate%26sub_id_3%3Dinorganic&utm_source=affiliate&utm_campaign=brand_affiliate&utm_term=20260417&utm_content=Production_1332464&channel=affiliate&sub_id_2=affiliate&sub_id_3=inorganic&campaign=brand_affiliate&term=20260417&ad_creative=23748&ad_group=19149613&content=Production_1332464&deeplink_url=ohouseapp%3A%2F%2Fstore.ohou.se%2Fgoods%2F1332464&fallback_desktop=https%3A%2F%2Fstore.ohou.se%2Fgoods%2F1332464" target="_blank" rel="noopener noreferrer">
+            <div class="cta-top">
+              <img src="images/todayhouse_nobg.png" alt="오늘의집" class="cta-logo">
+              <span class="cta-arrow">↗</span>
+            </div>
+            <span class="cta-price">239,000원</span>
+          </a></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const tabs = document.querySelectorAll('.tab');
+    const sortBtns = document.querySelectorAll('.sort-btn');
+    const grid = document.querySelector('.grid');
+    let currentFilter = '전체';
+    let currentSort = null;
+
+    function getCards() {
+      return Array.from(grid.querySelectorAll('.card'));
+    }
+
+    function applyFilterAndSort() {
+      const cards = getCards();
+      cards.forEach(card => {
+        const match = currentFilter === '전체' || card.dataset.category === currentFilter;
+        card.classList.toggle('hidden', !match);
+      });
+      if (currentSort) {
+        const visible = cards.filter(c => !c.classList.contains('hidden'));
+        const hidden  = cards.filter(c =>  c.classList.contains('hidden'));
+        visible.sort((a, b) => {
+          const pa = parseInt(a.dataset.price) || 0;
+          const pb = parseInt(b.dataset.price) || 0;
+          return currentSort === 'asc' ? pa - pb : pb - pa;
+        });
+        [...visible, ...hidden].forEach(c => grid.appendChild(c));
+      }
+    }
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentFilter = tab.dataset.filter;
+        applyFilterAndSort();
+      });
+    });
+
+    const tabsEl   = document.querySelector('.tabs');
+    const tabsWrap = document.querySelector('.tabs-wrap');
+    if (tabsEl && tabsWrap) {
+      const updateFade = () => {
+        const atEnd = tabsEl.scrollLeft + tabsEl.clientWidth >= tabsEl.scrollWidth - 4;
+        tabsWrap.classList.toggle('at-end', atEnd);
+      };
+      tabsEl.addEventListener('scroll', updateFade, { passive: true });
+      window.addEventListener('resize', updateFade);
+      updateFade();
+    }
+
+    sortBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (currentSort === btn.dataset.sort) {
+          btn.classList.remove('active');
+          currentSort = null;
+        } else {
+          sortBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentSort = btn.dataset.sort;
+        }
+        applyFilterAndSort();
+      });
+    });
+  </script>
+</body>
+</html>
