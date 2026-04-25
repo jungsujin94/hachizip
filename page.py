@@ -261,9 +261,9 @@ def generate_html(products: list) -> str:
 
     .new-badge {{
       position: absolute;
-      top: 0;
-      right: 0;
-      width: 72px;
+      top: 8px;
+      right: 8px;
+      width: 18%;
       height: auto;
       pointer-events: none;
       z-index: 2;
