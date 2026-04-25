@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(productspage)",
+      "Skill(productspage:*)",
+      "Bash(python pipeline.py \"https://ozip.me/dYDODH1?af\")",
+      "Bash(python pipeline.py \"https://ozip.me/AGQDPCI?af\")",
+      "Bash(python pipeline.py \"https://ozip.me/bM69E0o?af\")",
+      "Bash(python -)"
+    ]
+  }
+}

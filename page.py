@@ -9,6 +9,7 @@ Usage:
 import json
 import sys
 from pathlib import Path
+from PIL import Image
 
 PRODUCTS_JSON = Path("products.json")
 OUTPUT_HTML = Path("index.html")
@@ -18,7 +19,26 @@ DISCLAIMER_COUPANG = "이 포스팅은 쿠팡 파트너스 활동의 일환으�
 DISCLAIMER_PRICE   = "※ 표시된 가격은 쿠폰 적용 전 가격이며, 배송비가 별도로 발생할 수 있습니다."
 
 
-def build_card(p: dict) -> str:
+def make_sticker_nobg():
+    """Strip white background from newsticker.png → save newsticker_nobg.png."""
+    src = Path("images/newsticker.png")
+    dst = Path("images/newsticker_nobg.png")
+    if not src.exists():
+        return
+    img = Image.open(src).convert("RGBA")
+    pixels = img.getdata()
+    new_pixels = []
+    for r, g, b, a in pixels:
+        # Treat near-white as transparent
+        if r > 200 and g > 200 and b > 200:
+            new_pixels.append((r, g, b, 0))
+        else:
+            new_pixels.append((r, g, b, a))
+    img.putdata(new_pixels)
+    img.save(dst, format="PNG")
+
+
+def build_card(p: dict, order: int = 0, is_new: bool = False) -> str:
     slug         = p.get("slug", "")
     img          = p.get("image", "")
     name_ko      = p.get("name_ko") or p.get("title", "")
@@ -62,12 +82,15 @@ def build_card(p: dict) -> str:
 
     primary_link = ohouse_url if has_ohouse else (coupang_url or "#")
 
+    new_badge = '<img src="images/newsticker_nobg.png" class="new-badge" alt="NEW">' if is_new else ""
+
     return f"""
-    <div class="card" data-category="{category}" data-price="{price_num}">
+    <div class="card" data-category="{category}" data-price="{price_num}" data-order="{order}">
       {brand_html}
       <a class="img-link" href="{primary_link}" target="_blank" rel="noopener noreferrer">
         <div class="img-wrap">
           <img src="{img}" alt="{name_ko}" loading="lazy">
+          {new_badge}
         </div>
       </a>
       <div class="info">
@@ -91,7 +114,12 @@ def build_tabs(products: list) -> str:
 
 
 def generate_html(products: list) -> str:
-    cards = "".join(build_card(p) for p in products)
+    total = len(products)
+    new_slugs = {p["slug"] for p in products[max(0, total - 6):]}
+    cards = "".join(
+        build_card(p, order=i, is_new=(p["slug"] in new_slugs))
+        for i, p in enumerate(products)
+    )
     tabs = build_tabs(products)
 
     return f"""<!DOCTYPE html>
@@ -220,6 +248,7 @@ def generate_html(products: list) -> str:
 
     /* Warm parchment background so transparent sketch looks great */
     .img-wrap {{
+      position: relative;
       width: 100%;
       aspect-ratio: 1 / 1;
       background: #f0ede8;
@@ -228,6 +257,16 @@ def generate_html(products: list) -> str:
       justify-content: center;
       overflow: hidden;
       padding: 16px;
+    }}
+
+    .new-badge {{
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 72px;
+      height: auto;
+      pointer-events: none;
+      z-index: 2;
     }}
 
     .img-wrap img {{
@@ -381,6 +420,7 @@ def generate_html(products: list) -> str:
       </div>
     </div>
     <div class="sort-controls">
+      <button class="sort-btn" data-sort="newest">최신순 ★</button>
       <button class="sort-btn" data-sort="asc">가격 낮은순 ↑</button>
       <button class="sort-btn" data-sort="desc">가격 높은순 ↓</button>
     </div>
@@ -408,6 +448,11 @@ def generate_html(products: list) -> str:
         const visible = cards.filter(c => !c.classList.contains('hidden'));
         const hidden  = cards.filter(c =>  c.classList.contains('hidden'));
         visible.sort((a, b) => {{
+          if (currentSort === 'newest') {{
+            const oa = parseInt(a.dataset.order) || 0;
+            const ob = parseInt(b.dataset.order) || 0;
+            return ob - oa;
+          }}
           const pa = parseInt(a.dataset.price) || 0;
           const pb = parseInt(b.dataset.price) || 0;
           return currentSort === 'asc' ? pa - pb : pb - pa;
@@ -467,6 +512,7 @@ def generate_page(products: list = None):
         print("제품이 없습니다.")
         return
 
+    make_sticker_nobg()
     html = generate_html(products)
     OUTPUT_HTML.write_text(html, encoding="utf-8")
     print(f"index.html 생성 완료 ({len(products)}개 제품)")
