@@ -263,10 +263,11 @@ def generate_html(products: list) -> str:
       position: absolute;
       top: 8px;
       right: 8px;
-      width: 18%;
-      height: auto;
+      width: 18% !important;
+      height: auto !important;
       pointer-events: none;
       z-index: 2;
+      object-fit: unset !important;
     }}
 
     .img-wrap img {{
